@@ -1,0 +1,87 @@
+plugins {
+    id 'java'
+    alias(libs.plugins.spring.boot)
+}
+
+group = "${libs.versions.projectGroup.get()}"
+version = "${libs.versions.projectVersion.get()}"
+description = "${libs.versions.projectDesc.get()}"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    flatDir { dirs('libs') }
+    mavenLocal()
+    // 阿里云镜像 (推荐)
+//    maven { url = 'https://maven.aliyun.com/repository/public' }
+    // 阿里云Google仓库（Android项目必需）
+//    maven { url = 'https://maven.aliyun.com/repository/google' }
+    // 阿里云Spring仓库（Spring项目可选）
+//    maven { url = 'https://maven.aliyun.com/repository/spring' }
+    // 腾讯云镜像 (备选)
+//    maven { url = 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public' }
+    // 华为云镜像 (备选)
+//    maven { url = 'https://repo.huaweicloud.com/repository/maven' }
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform(libs.spring.boot.dependencies)
+    implementation platform(libs.spring.ai.bom)
+
+    // Spring Boot Starters
+    implementation (libs.spring.boot.starter.web)
+
+    // Spring AI (使用 bundle 或单独引入)
+//    implementation libs.spring.ai.openai
+//    implementation libs.spring.ai.ollama
+    // 或者使用 bundle
+     implementation(libs.bundles.spring.ai.bundle)
+
+    // Testing
+    testImplementation platform(libs.spring.boot.dependencies)
+    testImplementation platform(libs.spring.ai.bom)
+    testImplementation(libs.bundles.testing)
+}
+
+// https://docs.gradle.org/8.14.3/javadoc/org/gradle/api/tasks/testing/Test.html#useJUnitPlatform
+test {
+    useJUnitPlatform()
+    systemProperty('junit.jupiter.execution.parallel.enabled', 'true')
+    systemProperty('junit.jupiter.execution.parallel.mode.default', 'concurrent')
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2 as int
+    // explicitly include or exclude tests
+//    include 'org/foo/**'
+//    exclude 'org/boo/**'
+
+    // show standard out and standard error of the test JVM(s) on the console
+//    testLogging.showStandardStreams = true
+
+    // set heap size for the test JVM(s)
+//    minHeapSize = "128m"
+//    maxHeapSize = "512m"
+
+    // set JVM arguments for the test JVM(s)
+//    jvmArgs('-XX:MaxPermSize=256m')
+
+    // listen to events in the test execution lifecycle
+//    beforeTest { descriptor ->
+//        logger.lifecycle("Running test: " + descriptor)
+//    }
+
+    // fail the 'test' task on the first test failure
+//    failFast = true
+
+    // skip an actual test execution
+//    dryRun = true
+
+    // listen to standard out and standard error of the test JVM(s)
+//    onOutput { descriptor, event ->
+//        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+//    }
+}

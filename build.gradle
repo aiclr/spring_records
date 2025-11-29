@@ -1,0 +1,15 @@
+tasks.register('spring-ai') {
+    dependsOn gradle.includedBuild('ai').task(':build')
+}
+
+tasks.register('clean') {
+    group 'build'
+    dependsOn gradle.includedBuild('ai').task(':clean')
+
+}
+
+tasks.register('build') {
+    group 'build'
+    dependsOn 'clean'
+    dependsOn 'spring-ai'
+}
